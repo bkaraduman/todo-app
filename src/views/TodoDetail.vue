@@ -13,7 +13,7 @@
               Go Back
             </v-btn>
             <v-spacer></v-spacer>
-            <v-btn variant="text" color="white" @click="reveal = true">
+            <v-btn variant="text" color="white" @click="editTodoItem(todo)">
               Edit
             </v-btn>
           </v-toolbar>
@@ -40,13 +40,51 @@
       </v-card>
     </v-row>
   </v-container>
+
+  <v-dialog v-model="showEditTodoDialog" max-width="600">
+    <v-card>
+      <v-card-title>Add Todo</v-card-title>
+      <v-card-text>
+        <v-text-field v-model="selectedTodo.title" label="Title"></v-text-field>
+        <v-divider></v-divider>
+
+        <VueDatePicker
+          v-model="selectedTodo.endDate"
+          :auto-position="false"
+        ></VueDatePicker>
+
+        <v-divider></v-divider>
+        <v-checkbox
+          label="Is Completed"
+          v-model="selectedTodo.done"
+        ></v-checkbox>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="primary" @click="updateTodoItem">Save</v-btn>
+        <v-btn @click="showEditTodoDialog = false">Cancel</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
 import moment from "moment";
+import VueDatePicker from "@vuepic/vue-datepicker";
+import Snackbar from "../components/Shared/Snackbar.vue";
+import "@vuepic/vue-datepicker/dist/main.css";
+
 export default {
+  components: {
+    VueDatePicker,
+    Snackbar,
+  },
   data() {
-    return { todo: null };
+    return {
+      todo: null,
+      selectedTodo: null,
+      showEditTodoDialog: false,
+      customPosition: () => ({ top: 0, left: 0 }),
+    };
   },
   methods: {
     getTodoDetail() {
@@ -54,6 +92,22 @@ export default {
       this.$store.dispatch("todos/getTodoById", id).then((res) => {
         this.todo = res.data;
       });
+    },
+    editTodoItem(todo) {
+      console.log(todo);
+      this.selectedTodo = { ...todo };
+      this.selectedTodo.done = todo.state === "Completed";
+      this.showEditTodoDialog = true;
+    },
+    updateTodoItem() {
+      if (this.selectedTodo.done === true) {
+        this.selectedTodo.state = "Completed";
+      } else {
+        this.selectedTodo.state = "Todo";
+      }
+      this.$store.dispatch("todos/updateTodo", this.selectedTodo);
+      this.showEditTodoDialog = false;
+      this.todo = this.selectedTodo;
     },
     dateTime(value) {
       return moment(value).format("YYYY-MM-DD HH:mm:ss");
