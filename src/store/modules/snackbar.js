@@ -4,7 +4,6 @@ const state = {
 };
 const mutations = {
   showSnackbar(state, text) {
-    console.log("asdasdasd");
     let timeout = 0;
     if (state.show) {
       state.show = false;

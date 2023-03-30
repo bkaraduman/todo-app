@@ -1,9 +1,9 @@
 <template>
   <v-card class="mx-auto">
-    <v-toolbar color="secondary">
+    <v-toolbar color="deep-purple accent-4">
       <v-toolbar-title>Todos</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn variant="text" icon="mdi-magnify"></v-btn>
+      <search v-if="$route.path === '/'" />
     </v-toolbar>
     <v-list lines="two" v-if="tasks && tasks.length">
       <v-list-item v-for="task in tasks" :key="task.id" :title="task.title">
@@ -11,37 +11,31 @@
           {{ dateTime(task.endDate) }}
         </v-list-item-subtitle>
         <template v-slot:prepend>
-          <v-icon
-            size="large"
-            color="grey-lighten-1"
-            icon="mdi-message-text"
-          ></v-icon>
+          <span class="material-icons task"> task </span>
         </template>
 
         <template v-slot:append>
           <router-link :to="{ name: 'Todo', params: { id: task.id } }">
-            <v-btn
-              color="grey-lighten-1"
-              icon="mdi-pencil"
-              variant="text"
-            ></v-btn>
+            <span class="material-icons"> edit </span>
           </router-link>
-          <v-btn
-            color="grey-lighten-1"
-            icon="mdi-delete"
-            variant="text"
-            @click="deleteTodoItem(task)"
-          ></v-btn> </template
+          <span class="material-icons" @click="deleteTodoItem(task)">
+            delete
+          </span> </template
         ><v-divider></v-divider>
       </v-list-item>
     </v-list>
   </v-card>
+  
+  <no-task v-if="!tasks || !tasks.length"></no-task>
 </template>
 
 <script>
 import moment from "moment";
+import NoTask from "../components/NoTask.vue";
+import Search from "../components/Search.vue";
+
 export default {
-  components: {},
+  components: { NoTask, Search },
   data() {
     return {
       todos: [],
@@ -51,12 +45,11 @@ export default {
   },
   computed: {
     tasks() {
-      return this.$store.getters["todos/getAllTodos"];
+      return this.$store.getters["todos/tasksFiltered"];
     },
   },
   methods: {
     editTodoItem(todo) {
-      console.log(todo);
       this.selectedTodo = { ...todo };
       this.showEditTodoDialog = true;
     },
@@ -72,13 +65,25 @@ export default {
       this.selectedTodo.title = "";
     },
     deleteTodoItem(todo) {
-      console.log("delete", todo);
       this.$store.dispatch("todos/deleteTodo", todo);
     },
   },
 };
 </script>
 <style scoped>
-a { text-decoration: none; }
-
+a {
+  text-decoration: none;
+}
+.material-icons {
+  font-size: 24px;
+  margin-left: 10px;
+  color: #bbb;
+  cursor: pointer;
+}
+.task {
+  margin-right: 20px;
+}
+.material-icons:hover {
+  color: #777;
+}
 </style>

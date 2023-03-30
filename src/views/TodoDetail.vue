@@ -94,7 +94,6 @@ export default {
       });
     },
     editTodoItem(todo) {
-      console.log(todo);
       this.selectedTodo = { ...todo };
       this.selectedTodo.done = todo.state === "Completed";
       this.showEditTodoDialog = true;

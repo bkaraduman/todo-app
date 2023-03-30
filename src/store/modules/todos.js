@@ -2,6 +2,8 @@ import axios from "axios";
 
 const state = {
   todos: [],
+  search: null,
+  sorting: false,
 };
 const mutations = {
   setTodos(state, todos) {
@@ -17,6 +19,9 @@ const mutations = {
   deleteTodo(state, todo) {
     const index = state.todos.findIndex((t) => t.id === todo.id);
     state.todos.splice(index, 1);
+  },
+  setSearch(state, value) {
+    state.search = value;
   },
 };
 const actions = {
@@ -36,12 +41,23 @@ const actions = {
     const response = await axios.get("http://localhost:3000/todos");
     commit("setTodos", response.data);
   },
+  async fetchTodosByQuery({ commit }, query) {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`http://localhost:3000/todos?q=${query}`)
+        .then((res) => {
+          resolve(res);
+          commit("setSearch", query);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
   async addTodo({ commit }, todo) {
-    console.log(commit);
     const response = await axios.post("http://localhost:3000/todos", todo);
     commit("addTodo", response.data);
     commit("snackbar/showSnackbar", "Task added!", { root: true });
-    console.log("showsnackbar");
   },
   async updateTodo({ commit }, todo) {
     const response = await axios.put(
@@ -60,6 +76,14 @@ const actions = {
 const getters = {
   getAllTodos: (state) => {
     return state.todos;
+  },
+  tasksFiltered(state) {
+    if (!state.search) {
+      return state.todos;
+    }
+    return state.todos.filter((task) =>
+      task.title.toLocaleLowerCase().includes(state.search.toLocaleLowerCase())
+    );
   },
 };
 

@@ -1,6 +1,5 @@
 <template>
   <div class="no-tasks">
-    asdasdasd
     <v-icon size="100" color="primary"> mdi-check </v-icon>
     <div class="text-h5 primary--text">No tasks</div>
   </div>

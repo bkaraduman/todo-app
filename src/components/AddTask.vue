@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="showAddTodoDialog" max-width="600">
+  <v-dialog v-model="showAddTodoDialog" max-width="600">
     <v-card>
       <v-card-title>Add Todo</v-card-title>
       <v-card-text>
@@ -23,16 +23,16 @@
 </template>
 
 <script>
-  export default {
-    data: () => ({
-      title: '',
-      rules: [
-        value => {
-          if (value) return true
+export default {
+  data: () => ({
+    title: "",
+    rules: [
+      (value) => {
+        if (value) return true;
 
-          return 'You must enter t.'
-        },
-      ],
-    }),
-  }
+        return "You must enter t.";
+      },
+    ],
+  }),
+};
 </script>
