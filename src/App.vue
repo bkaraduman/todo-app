@@ -10,11 +10,7 @@
       </v-tabs>
       <v-spacer></v-spacer>
 
-      <v-btn
-        density="compact"
-        @click="showAddTodoDialog = true"
-        icon="mdi-plus"
-      ></v-btn>
+      <v-btn density="compact" @click="openDialog()" icon="mdi-plus"></v-btn>
     </v-app-bar>
 
     <v-main class="bg-grey-lighten-3">
@@ -29,29 +25,7 @@
     </v-main>
   </v-app>
 
-  <v-dialog v-model="showAddTodoDialog" max-width="600">
-    <v-card>
-      <v-card-title>Add Todo</v-card-title>
-      <v-card-text>
-        <v-text-field v-model="newTodo.title" label="Title"></v-text-field>
-        <v-divider></v-divider>
-
-        <VueDatePicker
-          v-model="newTodo.endDate"
-          :auto-position="false"
-        ></VueDatePicker>
-
-        <v-divider></v-divider>
-        <v-checkbox label="Is Completed" v-model="newTodo.state"></v-checkbox>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn color="primary" @click="addTodoItem">Add</v-btn>
-        <v-btn @click="showAddTodoDialog = false">Cancel</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-
-  
+  <add-task ref="dialogComponent" />
 </template>
 <style>
 body {
@@ -68,9 +42,7 @@ body {
 <script>
 import Search from "./components/Search.vue";
 import AddTask from "./components/AddTask.vue";
-import VueDatePicker from "@vuepic/vue-datepicker";
 import Snackbar from "./components/Shared/Snackbar.vue";
-import "@vuepic/vue-datepicker/dist/main.css";
 
 export default {
   name: "App",
@@ -78,36 +50,13 @@ export default {
     Search,
     Snackbar,
     AddTask,
-    VueDatePicker,
   },
   data: () => ({
     links: ["Todos"],
-    showPicker: false,
-    selectedDate: null,
-    date: null,
-    customPosition: () => ({ top: 0, left: 0 }),
-    showAddTodoDialog: false,
-    newTodo: {
-      title: "",
-      endDate: null,
-      state: "",
-    },
   }),
   methods: {
-    addTodoItem() {
-      if (this.newTodo.state === true) {
-        this.newTodo.state = "Completed";
-      } else {
-        this.newTodo.state = "Todo";
-      }
-
-      this.$store.dispatch("todos/addTodo", this.newTodo);
-      this.newTodo = {
-        title: "",
-        endDate: new Date().toISOString(),
-        state: false,
-      };
-      this.showAddTodoDialog = false;
+    openDialog() {
+      this.$refs.dialogComponent.openDialog();
     },
   },
   mounted() {

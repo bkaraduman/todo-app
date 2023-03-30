@@ -38,9 +38,6 @@ export default {
   components: { NoTask, Search },
   data() {
     return {
-      todos: [],
-      selectedTodo: null,
-      showEditTodoDialog: false,
     };
   },
   computed: {
@@ -49,20 +46,11 @@ export default {
     },
   },
   methods: {
-    editTodoItem(todo) {
-      this.selectedTodo = { ...todo };
-      this.showEditTodoDialog = true;
-    },
     dateTime(value) {
       return moment(value).format("YYYY-MM-DD HH:mm:ss");
     },
     generateUrl(id) {
       return "todos/" + id;
-    },
-    updateTodoItem() {
-      this.$store.dispatch("todos/updateTodo", this.selectedTodo);
-      this.showEditTodoDialog = false;
-      this.selectedTodo.title = "";
     },
     deleteTodoItem(todo) {
       this.$store.dispatch("todos/deleteTodo", todo);
